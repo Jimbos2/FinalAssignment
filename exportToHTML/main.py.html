@@ -1,0 +1,62 @@
+<html>
+<head>
+<title>main.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #808080;}
+.s4 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+main.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">pandas </span><span class="s0">as </span><span class="s1">pd</span>
+<span class="s0">import </span><span class="s1">matplotlib.pyplot </span><span class="s0">as </span><span class="s1">plt</span>
+<span class="s0">import </span><span class="s1">numpy </span><span class="s0">as </span><span class="s1">np</span>
+
+
+<span class="s1">data = pd.read_csv(</span><span class="s2">'liquor_iowa.csv'</span><span class="s1">)</span>
+
+<span class="s3"># most popular product in zip code</span>
+
+<span class="s3"># this code is for the number 1 product in every zip code</span>
+<span class="s1">madd = data.loc[data.groupby(</span><span class="s2">'zip_code'</span><span class="s1">)[</span><span class="s2">'bottles_sold'</span><span class="s1">].transform(</span><span class="s2">'max'</span><span class="s1">).eq(data[</span><span class="s2">'bottles_sold'</span><span class="s1">])]</span>
+
+<span class="s3"># this code is for multiple products in each zip code</span>
+<span class="s2">''' 
+dafa = data.groupby(['zip_code', 'item_number']).agg({&quot;bottles_sold&quot;: ['max']}) 
+dafa.columns = ['bottles_sold'] 
+dafa = dafa.reset_index() 
+ 
+'''</span>
+<span class="s1">colors = madd.groupby(</span><span class="s2">'item_number'</span><span class="s1">)</span>
+<span class="s3"># colors = dafa.groupby('item_number')</span>
+
+<span class="s0">for </span><span class="s1">name</span><span class="s0">, </span><span class="s1">group </span><span class="s0">in </span><span class="s1">colors:</span>
+   <span class="s1">plt.plot(group.zip_code</span><span class="s0">, </span><span class="s1">group.bottles_sold</span><span class="s0">, </span><span class="s1">marker= </span><span class="s2">'o'</span><span class="s0">, </span><span class="s1">ls=</span><span class="s2">''</span><span class="s0">,</span><span class="s1">markersize=</span><span class="s4">12</span><span class="s0">, </span><span class="s1">label=name)</span>
+
+
+<span class="s1">plt.show()</span>
+
+
+
+<span class="s3"># percentage of sales per store</span>
+
+<span class="s1">sal = data.groupby(</span><span class="s2">'store_number'</span><span class="s1">).sum().sort_values(</span><span class="s2">'store_number'</span><span class="s1">)</span>
+
+<span class="s3"># print(sal.sale_dollars)</span>
+<span class="s1">total = np.sum(sal[</span><span class="s2">'sale_dollars'</span><span class="s1">])</span>
+<span class="s1">sal.sale_dollars = np.multiply((np.divide(sal[</span><span class="s2">'sale_dollars'</span><span class="s1">]</span><span class="s0">,</span><span class="s1">total))</span><span class="s0">,</span><span class="s4">100</span><span class="s1">)</span>
+<span class="s1">sal.sale_dollars = np.around(sal.sale_dollars</span><span class="s0">, </span><span class="s1">decimals=</span><span class="s4">4</span><span class="s1">)</span>
+<span class="s3"># print(sal.sale_dollars.sort_values())</span>
+
+<span class="s1">plt.bar(sal.index</span><span class="s0">, </span><span class="s1">sal.sale_dollars</span><span class="s0">, </span><span class="s1">width=</span><span class="s4">100</span><span class="s1">)</span>
+<span class="s1">plt.show()</span></pre>
+</body>
+</html>
